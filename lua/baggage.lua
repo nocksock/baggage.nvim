@@ -20,12 +20,15 @@ local is_supported = function(origin)
 end
 
 ---comment
----@param origin string|string[]
----@param opts PluginOptions
+---@param origin string|(string|table)[]
+---@param opts? PluginOptions
 ---@return table
 M.from = function(origin, opts)
   if type(origin) == 'table' then
     return vim.tbl_map(function(o)
+      if type(o) == 'table' then
+        return M.from(o[1], o[2])
+      end
       return M.from(o)
     end, origin)
   end
