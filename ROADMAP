@@ -1,7 +1,7 @@
 # TODOS
 
 - [ ] support for running commands after clone
-- [ ] support tables with options in from (+tests)
+- [x] support tables with options in from (+tests)
 
 - [ ] use submodule instead of clone
 - [ ] clone plugins into opt and call packadd in .from
