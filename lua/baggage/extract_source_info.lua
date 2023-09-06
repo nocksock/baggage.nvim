@@ -1,5 +1,6 @@
+local r = require
 ---@param source string any url with a basic format similar to gitlab/sourcehut/github etc
----@return PluginSpec
+---@return Plugin
 return function(source)
   local host, org, name = source:match("https://([^/]+)/([^/]+)/([^/]+)/?")
   local commit = source:match("/tree/([^/]+)$")
@@ -8,6 +9,7 @@ return function(source)
     clone_url = "https://" .. host .. "/" .. org .. "/" .. name,
     name = name,
     org = org,
-    commit = commit
+    commit = commit,
+    remote = true,
   }
 end

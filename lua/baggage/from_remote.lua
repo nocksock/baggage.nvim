@@ -1,13 +1,26 @@
----@param source string
----@param plugin_opts PluginOptions
-return function(source, plugin_opts)
-  local settings = require'baggage.settings'
-  local msg      = require'baggage.msg'
-  local system   = require'baggage.system'
-  local plugin   = require'baggage.extract_source_info' (source)
+local r = require
+---@class SourceInfo
+---@field name string
+---@field org string
+---@field clone_url string
+---@field commit string
 
-  plugin.remote = true
-  plugin.opts = plugin_opts or {}
+---@class Plugin :SourceInfo
+---@field path string
+---@field opts PluginOptions
+
+---@class PluginOptions
+---@field on_sync string | fun()
+
+---@param remote_url string
+---@param opts PluginOptions
+return function(source, opts)
+  local settings = r'baggage.settings'
+  local msg      = r'baggage.msg'
+  local system   = r'baggage.system'
+  local plugin   = r'baggage.extract_source_info' (source)
+
+  plugin.opts = opts or {}
   plugin.dirname = plugin.org .. "-" .. plugin.name
   plugin.path = settings.pack_path .. plugin.dirname
 
@@ -26,10 +39,10 @@ return function(source, plugin_opts)
 
     vim.cmd("helptags ALL")
     vim.cmd("packadd! " .. plugin.dirname)
-  end
 
-  if plugin.opts.on_sync then
-    require'baggage.run_sync'(plugin, plugin_opts)
+    if plugin.opts.on_sync then
+      r'baggage.run_sync'(plugin)
+    end
   end
 
   return plugin
