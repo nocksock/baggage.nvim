@@ -1,6 +1,6 @@
 # TODOS
 
-- [ ] support for running commands after clone
+- [x] support for running commands after clone
 - [x] support tables with options in from (+tests)
 
 - [ ] use submodule instead of clone
