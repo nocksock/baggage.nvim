@@ -1,49 +1,37 @@
 local r = require
----@class SourceInfo
----@field name string
----@field org string
----@field clone_url string
----@field commit string
-
----@class Plugin :SourceInfo
----@field path string
----@field opts PluginOptions
-
----@class PluginOptions
----@field on_sync string | fun()
-
 ---@param remote_url string
 ---@param opts PluginOptions
 return function(source, opts)
-  local settings = r'baggage.settings'
   local msg      = r'baggage.msg'
-  local system   = r'baggage.system'
-  local plugin   = r'baggage.extract_source_info' (source)
-
-  plugin.opts = opts or {}
-  plugin.dirname = plugin.org .. "-" .. plugin.name
-  plugin.path = settings.pack_path .. plugin.dirname
+  local plugin   = r'baggage.create_plugin_from_url' (source, opts)
 
   if not vim.uv.fs_stat(plugin.path) then
-    msg.info("cloning %s", plugin.clone_url)
-    system({ "git", "clone", plugin.clone_url, plugin.path }, function(result)
-      if result.code ~= 0 then
-        error("Failed to clone plugin repository: %s", vim.inspect(result))
-      end
+    -- using vim.cmd because vim.fn.system also blocks the UI when running synchroneously so we
+    -- can't print info messages. But we *have* to run synchrounously because code after the call to
+    -- from relies on packages existing.
+    vim.cmd("!git clone " .. plugin.clone_url .. " " .. plugin.path)
 
+    r'baggage.within'(plugin.path, function()
       if plugin.commit then
         msg.info("checking out commit %s", plugin.commit)
-        system({ "git", "checkout", plugin.commit })
+        vim.cmd("!git checkout " .. plugin.commit)
+      end
+
+      if plugin.opts.on_sync then
+        if vim.startswith(plugin.opts.on_sync, ":") then
+          vim.cmd(plugin.opts.on_sync:sub(2))
+        else
+          vim.cmd("! " .. plugin.opts.on_sync)
+        end
+      end
+
+      if vim.uv.fs_stat(plugin.path .. "/doc") then
+        vim.cmd("helptags " .. plugin.path .. "/doc")
       end
     end)
-
-    vim.cmd("helptags ALL")
-    vim.cmd("packadd! " .. plugin.dirname)
-
-    if plugin.opts.on_sync then
-      r'baggage.run_sync'(plugin)
-    end
   end
+
+  vim.cmd("packadd " .. plugin.dirname)
 
   return plugin
 end
