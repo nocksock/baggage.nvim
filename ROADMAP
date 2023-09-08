@@ -12,7 +12,8 @@
 
 - [x] write initial setup routine
 
-- [ ] use submodule instead of clone
+- [x] update images to have git configured properly (name email)
+- [x] use submodule instead of clone
 - [x] clone plugins into opt and call packadd in .from
 
 ## 0.2.0
@@ -25,6 +26,7 @@
 ## 0.5.0
 
 - [ ] add commands
+- [ ] watcher for example runner?
 - [ ] automated tests using the examples?
 
 ## 0.6.0

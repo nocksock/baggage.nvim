@@ -5,11 +5,15 @@ return function(source, opts)
   local msg      = r'baggage.msg'
   local plugin   = r'baggage.create_plugin_from_url' (source, opts)
 
+  r'baggage.prepare_opt_directory'(plugin)
   if not vim.uv.fs_stat(plugin.path) then
-    -- using vim.cmd because vim.fn.system also blocks the UI when running synchroneously so we
-    -- can't print info messages. But we *have* to run synchrounously because code after the call to
-    -- from relies on packages existing.
-    vim.cmd("!git clone " .. plugin.clone_url .. " " .. plugin.path)
+    r'baggage.within'(r'baggage.settings'.opt_path, function()
+      -- using vim.cmd because vim.fn.system also blocks the UI when running synchroneously so we
+      -- can't print info messages. But we *have* to run synchrounously because code after the call to
+      -- from relies on packages existing.
+      vim.cmd("!git submodule add " .. plugin.clone_url .. " " .. plugin.dirname)
+      vim.cmd("!git commit -m 'add: " .. plugin.dirname .. "'")
+    end)
 
     r'baggage.within'(plugin.path, function()
       if plugin.commit then
