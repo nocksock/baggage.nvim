@@ -36,4 +36,4 @@ docker run                                                                    \
 	-v "$example_dir":/root/.config/nvim                                        \
 	-v "$root_dir":/root/baggage.nvim                                           \
 	-v "$root_dir":/root/.local/share/nvim/site/pack/baggage/start/baggage.nvim \
-	-it nocksock/neovim-run nvim
+	-it nocksock/neovim-run ${2:-nvim}
