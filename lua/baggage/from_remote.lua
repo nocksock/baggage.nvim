@@ -1,5 +1,5 @@
 local r = require
----@param remote_url string
+---@param source string
 ---@param opts PluginOptions
 return function(source, opts)
   local msg      = r'baggage.msg'

@@ -1,6 +1,6 @@
 ---@class BaggageSettings
 local M = {
-  pack_path = vim.fn.stdpath("data") .. "/site/pack/baggage/",
+  pack_path = vim.g.baggage_path
 }
 
 return M
