@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+if [[ -z $1 ]]; then
+	echo "Usage: $0 <name-of-example>"
+	exit 1
+fi
+
+root_dir=$(git rev-parse --show-toplevel)
+example_dir="$root_dir/examples/$1/"
+
+ docker run                             \
+	-v "$example_dir":/root/.config/nvim  \
+	-v "$root_dir/.git":/root/baggage.git \
+	-it nocksock/neovim-run nvim
