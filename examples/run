@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 
+# Invoke the selection prompt
 if [[ -z $1 ]]; then
 	echo "Usage: $0 <name-of-example>"
 	exit 1
@@ -8,7 +9,31 @@ fi
 root_dir=$(git rev-parse --show-toplevel)
 example_dir="$root_dir/examples/$1/"
 
+if [[ ! -d "$example_dir" ]]; then
+	echo "Example directory not found: $example_dir"
+	exit 1
+fi
+
+# the install example uses the remote repo for the full install routine
+if [[ $1 == "install" ]]; then
+ docker run                            \
+	-v "$example_dir":/root/.config/nvim \
+	-it nocksock/neovim-run nvim
+ exit 0
+fi
+
+# the install-local example performs the install routine using this repo
+if [[ $1 == "install-local" ]]; then
  docker run                             \
 	-v "$example_dir":/root/.config/nvim  \
 	-v "$root_dir/.git":/root/baggage.git \
+	-it nocksock/neovim-run nvim
+ exit 0
+fi
+
+# all other examples have it pre-installed via mount
+docker run                                                                    \
+	-v "$example_dir":/root/.config/nvim                                        \
+	-v "$root_dir":/root/baggage.nvim                                           \
+	-v "$root_dir":/root/.local/share/nvim/site/pack/baggage/start/baggage.nvim \
 	-it nocksock/neovim-run nvim
