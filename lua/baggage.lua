@@ -1,8 +1,10 @@
 local M = {}
 
-
-_G.LOADED_PLUGINS = {}
-local r = require
+if _G.r and _G.r ~= require then
+  vim.health.warn("r is already defined and not aliased to require")
+elseif not vim.g.baggage_no_alias then
+  _G.r = require
+end
 
 ---comment
 ---@param origin string
@@ -14,7 +16,7 @@ end
 ---comment
 ---@param origin string|(string|table)[]
 ---@param opts? PluginOptions
----@return table
+---@return Handle
 M.from = function(origin, opts)
   if type(origin) == 'table' then
     local plugins = vim.tbl_map(function(o)
@@ -23,7 +25,7 @@ M.from = function(origin, opts)
       end
       return M.from(o)
     end, origin)
-    -- return the last for chaining with .load
+    -- return a handle with the last plugin of the list closed in.
     return plugins[#plugins]
   end
 
@@ -32,10 +34,7 @@ M.from = function(origin, opts)
   end
 
   local plugin = r'baggage.from_remote'(origin, opts or {})
-
-  return {
-    load = r'baggage.load'(plugin),
-  }
+  return r'baggage.to_handle'(plugin)
 end
 
 return {
