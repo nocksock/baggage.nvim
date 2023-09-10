@@ -14,10 +14,10 @@ describe('from', function ()
     package.loaded['baggage.from_remote'] = spy
     require'baggage'.from {
       'https://github.com/nvim-telescope/telescope.nvim',
-      'https://github.com/nvim-telescope/telescope-fzf-native.nvim'
+      { 'https://github.com/nvim-telescope/telescope-fzf-native.nvim', {on_sync = "make"}}
     }
     assert.stub(spy).was_called_with('https://github.com/nvim-telescope/telescope.nvim', nil)
-    assert.stub(spy).was_called_with('https://github.com/nvim-telescope/telescope-fzf-native.nvim', nil)
+    assert.stub(spy).was_called_with('https://github.com/nvim-telescope/telescope-fzf-native.nvim', {on_sync = "make"})
   end)
 
   it('takes multiple urls and option', function ()
