@@ -6,6 +6,8 @@ elseif not vim.g.baggage_no_alias then
   _G.r = require
 end
 
+_G.LOADED_PLUGINS = {}
+
 ---comment
 ---@param origin string
 ---@return boolean
@@ -33,7 +35,7 @@ M.from = function(origin, opts)
     error("Unsupported origin: " .. origin)
   end
 
-  local plugin = r'baggage.from_remote'(origin, opts or {})
+  local plugin = r'baggage.from_remote'(origin, opts)
   return r'baggage.to_handle'(plugin)
 end
 
