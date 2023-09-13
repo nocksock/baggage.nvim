@@ -38,7 +38,7 @@ describe("handle", function ()
     assert.stub(spy).was_called(2)
   end)
 
-  it("has a .once method that ensures that setup is only called once", function () 
+  it("has a .once method that ensures that setup is only called once", function ()
     handle.once('telescope', {})
     handle.once('telescope', {})
     assert.stub(spy).was_called(1)

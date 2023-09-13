@@ -17,7 +17,9 @@ return function(plugin)
     return require(plugin)
   end
 
-  local candidates = require 'baggage.infer_plugin_handle' (plugin.name)
+  assert(type(plugin) == "table", "plugin must be a string or table")
+
+  local candidates = require 'baggage.infer_plugin_handle'(plugin)
   local p = load_from_canditates(candidates)
   if p then
     table.insert(LOADED_PLUGINS, p)
