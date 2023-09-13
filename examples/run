@@ -1,13 +1,30 @@
 #!/usr/bin/env zsh
 
-# Invoke the selection prompt
-if [[ -z $1 ]]; then
-	echo "Usage: $0 <name-of-example>"
+root_dir=$(git rev-parse --show-toplevel)
+example_dir="$root_dir/examples/$1/"
+cache_dir="$root_dir/.plugin-cache" # TODO: make cache work
+cmd=(-it nocksock/neovim-run ${2:-nvim})
+
+zparseopts -D -E -F -A opts h=help -help=help w=watch -watch=watch -nocache=nocache f=nocache
+
+if [[ -z $1 || ${help} ]]; then
+	cat <<-EOF
+		Usage: $0 <name-of-example>
+			-h, --help    Show this help message
+			-w, --watch   Watch the example directory for changes
+	EOF
+	test ${help} && exit 0
 	exit 1
 fi
 
-root_dir=$(git rev-parse --show-toplevel)
-example_dir="$root_dir/examples/$1/"
+if [[ $watch ]]; then
+	fd | entr -s "tmux killw -t docker ; tmux neww -d -n docker examples/run $1"
+	exit
+fi
+
+if [[ ! $nocache ]]; then
+	cache=(-v $cache_dir:/root/.local/share/nvim/site/pack/baggage/opt/)
+fi
 
 if [[ ! -d "$example_dir" ]]; then
 	echo "Example directory not found: $example_dir"
@@ -18,7 +35,8 @@ fi
 if [[ $1 == "install" ]]; then
  docker run                            \
 	-v "$example_dir":/root/.config/nvim \
-	-it nocksock/neovim-run nvim
+	$cache                               \
+	$cmd
  exit 0
 fi
 
@@ -27,13 +45,15 @@ if [[ $1 == "install-local" ]]; then
  docker run                             \
 	-v "$example_dir":/root/.config/nvim  \
 	-v "$root_dir/.git":/root/baggage.git \
-	-it nocksock/neovim-run nvim
+	$cache                                \
+	$cmd
  exit 0
 fi
+
 
 # all other examples have it pre-installed via mount
 docker run                                                                    \
 	-v "$example_dir":/root/.config/nvim                                        \
 	-v "$root_dir":/root/baggage.nvim                                           \
 	-v "$root_dir":/root/.local/share/nvim/site/pack/baggage/start/baggage.nvim \
-	-it nocksock/neovim-run ${2:-nvim}
+	$cmd
