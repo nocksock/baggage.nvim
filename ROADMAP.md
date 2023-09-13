@@ -18,13 +18,11 @@
 
 - [x] display some ui during clone
 - [x] create basic api for lazy-loading on events
-- [ ] create basic api for lazy-loading on keypresses
 - [x] add example using kickstart as a base
-- [ ] write tests for to_handle
+- [x] write tests for to_handle
 
 ## 0.3.0
 
-- [ ] add keymap tracker to prevent duplicate keymaps
 - [ ] add commands
 
 ## 0.4.0
@@ -34,15 +32,17 @@
 
 ## 0.5.0
 
-- [ ] watcher for example runner?
-- [ ] automated tests using the examples?
+- [ ] watcher for example runner
+- [ ] automated tests using the examples
 
 ## 0.6.0
 
 - [ ] generate and read lockfile?
+- [ ] create basic api for lazy-loading on keypresses
 
 ## 0.7.0
 
+- [ ] add keymap tracker to prevent duplicate keymaps
 - [ ] provide example for lazy-loading
   - [ ] on events
   - [ ] on keypress
