@@ -1,4 +1,3 @@
-local r = require
 local M = {}
 
 M.trace = function(msg, ...)
