@@ -37,5 +37,10 @@ return function(source, opts)
 
   vim.cmd("packadd " .. plugin.dirname)
 
+  -- this is a workaround to get rid of the "hit enter" prompt
+  -- TODO: research/try if there is a better way (:he hit-enter)
+  local keys = vim.api.nvim_replace_termcodes("<cr>", true, true, true)
+  vim.api.nvim_feedkeys(keys, 'n', false)
+
   return plugin
 end
