@@ -1,12 +1,15 @@
 # ROADMAP
 
-## 0.0.0
+## 0.0.0 poc
+
 - [x] create poc
 - [x] decide on API
 - [x] make it work for my own config
 - [x] support for commits and tags
 
-## 0.1.0
+
+## 0.1.0 making it usable
+
 - [x] support for running commands after clone
 - [x] support tables with options in from (+tests)
 - [x] write initial setup routine
@@ -14,52 +17,63 @@
 - [x] use submodule instead of clone
 - [x] clone plugins into opt and call packadd in .from
 
-## 0.2.0
+
+## 0.2.0 vertical slice
 
 - [x] display some ui during clone
 - [x] create basic api for lazy-loading on events
 - [x] add example using kickstart as a base
 - [x] write tests for to_handle
 
-## 0.3.0
 
+## 0.3.0 conveniences
+
+- [ ] add support for local repos
+- [ ] add remote fallback for local repos
 - [ ] add commands
 
-## 0.4.0
+
+## 0.4.0 examples
 
 - [ ] add way for examples to use cached plugins to speed up debugging
-- [ ] add support for local repos with fallback
-
-## 0.5.0
-
-- [ ] watcher for example runner
+- [/] watcher for example runner
 - [ ] automated tests using the examples
+- [ ] example for dotfiles that includes the submodules
 
-## 0.6.0
 
-- [ ] generate and read lockfile?
+## 0.5.0 let it simmer
+
+- [ ] let it sit for a few days
+
+
+## 0.6.0 brush up
+
+- [ ] do a code review, refactor
+
+
+## 0.7.0 utilities
+
 - [ ] create basic api for lazy-loading on keypresses
-
-## 0.7.0
-
 - [ ] add keymap tracker to prevent duplicate keymaps
 - [ ] provide example for lazy-loading
   - [ ] on events
   - [ ] on keypress
 
+
 ## 0.8.0
 
-- [ ] add basic docs/help 
+- [ ] add docs/help 
+
 
 ## 1.0.0
 
-- [ ] scaffold bash command from examples
+- [ ] write proper readme
+
 
 ## brainfarts
 
 - include version number in plugin-path if set
-- documentation for plugin authors to use baggage in their plugin
-- support for urls pointing to files and folders?
+
 
 ## Unsure
 
@@ -69,8 +83,8 @@
     it would make the migration path from something like lazy a bit easier, since it
     would incloud less changes.
 
-## Won't implemenent
 
+## Won't implemenent
 and tasks that turned out not work
 
 - A fancy UI
