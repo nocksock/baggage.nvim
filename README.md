@@ -1,4 +1,4 @@
->  Warning: this is in early access. Things will break, things will change, and
+> ⚠ Warning: this is in early access. Things will break, things will change, and
 > there'll be breaking changes. Also it's not complete yet. The following is
 > an incomplete draft that likely isn't up to date with the plugin's API.
 
@@ -29,10 +29,6 @@ if not vim.uv.fs_stat(vim.g.baggage_path) then
   vim.cmd("packloadall")
 end
 ```
-
-This will clone baggage into a folder within the `pack`-folder. That is
-a special folder, as it uses neovim's builtin package-manager. Most plugin
-managers use that folder as well. Read more about it at `:help packages`
 
 ## Usage
 
@@ -95,14 +91,14 @@ supported - at the end it's *basically* just a `git clone <url>`, with some twea
 when pointing to branches/commits/tags.
 
 
-### Lazy Loading
+### Lazy Loading on Events
 
 ```lua
 local setup = require 'baggage' .from 'https://github.com/foo/bar'
 
+-- the handle can be called this way to setup a plugin:
 vim.api.nvim_create_autocmd("BufEnter", {
     callback = function()
-        -- the handle can be called this way to setup a plugin:
         setup('foo', {})
     end
 })
@@ -118,9 +114,11 @@ vim.api.nvim_create_autocmd("BufEnter", {
 })
 ```
 
-## Handle
+### Lazy Loading on Keypress
 
-tbd: api description
+tbd
+
+## Handle API
 
 - `setup(name, opts)` is identical `require'name'.setup(opts)`
 - `setup.setup(name, opts)` identical to the above, for chaining
