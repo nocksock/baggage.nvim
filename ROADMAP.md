@@ -9,7 +9,6 @@
 
 
 ## 0.1.0 making it usable
-
 - [x] support for running commands after clone
 - [x] support tables with options in from (+tests)
 - [x] write initial setup routine
@@ -28,23 +27,17 @@
 
 ## 0.3.0 conveniences
 
-- [ ] add support for local repos
-- [ ] add remote fallback for local repos
 - [ ] add commands
-
 
 ## 0.4.0 examples
 
 - [ ] add way for examples to use cached plugins to speed up debugging
-- [/] watcher for example runner
-- [ ] automated tests using the examples
-- [ ] example for dotfiles that includes the submodules
+- [x] watcher for example runner
 
 
 ## 0.5.0 let it simmer
 
 - [ ] let it sit for a few days
-
 
 ## 0.6.0 brush up
 
@@ -64,7 +57,6 @@
 
 - [ ] add docs/help 
 
-
 ## 1.0.0
 
 - [ ] write proper readme
@@ -77,6 +69,7 @@
 
 ## Unsure
 
+- [ ] automated tests using the examples?
 - [ ] support for a `dependency` property?
 
     I usually found that order of imports is much more intuitive. However including
@@ -85,6 +78,7 @@
 
 
 ## Won't implemenent
+
 and tasks that turned out not work
 
 - A fancy UI
