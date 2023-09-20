@@ -4,7 +4,7 @@ local setup = require 'baggage'.from {
   'https://github.com/lewis6991/gitsigns.nvim',
 }
 
-r'on'({ "BufEnter" }, setup.lazily('gitsigns', {
+require'on'({ "BufEnter" }, setup.lazily('gitsigns', {
   signs = {
     add = { text = '+' },
     change = { text = '~' },
