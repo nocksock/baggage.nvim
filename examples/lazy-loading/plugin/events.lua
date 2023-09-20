@@ -28,3 +28,16 @@ vim.api.nvim_create_autocmd({"BufEnter"}, {
 -- TODO: api for lazyloading on keypress
 vim.keymap.set('n', '<leader>sf', '<cmd>Telescope find_files<cr>')
 vim.keymap.set('n', '<leader>sF', '<cmd>Telescope find_files hidden=true cwd=%:p:h<cr>')
+
+r'baggage.map'({
+  {'n', '<leader>sf', '<cmd>Telescope find_files<cr>'}
+}, handle)
+
+r'baggage.map'({
+  {'n', '<leader>sf', '<cmd>Telescope find_files<cr>'}
+}).setup(handle)
+
+-- r'baggage.map' handle {
+--   {'n', '<leader>sf', '<cmd>Telescope find_files<cr>'}
+-- }
+

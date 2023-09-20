@@ -6,19 +6,19 @@ if not vim.uv.fs_stat(vim.g.baggage_path) then
 end-- }}}
 
 vim.g.mapleader = " "
+vim.cmd.colorscheme {"habamax"}
+vim.o.rnu = true
+vim.o.nu = true
 
 local setup = require "baggage".from {
-  "https://github.com/nvim-lua/plenary.nvim",
+  'https://github.com/nvim-lua/plenary.nvim',
   'https://github.com/tpope/vim-vinegar',
   'https://github.com/nvim-telescope/telescope.nvim/tree/0.1.x',
   { 'https://github.com/nvim-telescope/telescope-fzf-native.nvim', on_sync = "make" },
 }
 
-vim.cmd.colorscheme {"habamax"}
-
-r 'baggage.on' ({ "BufEnter" }, setup.lazily('telescope'))
+vim.api.nvim_create_autocmd({"BufEnter"}, {
+  callback = setup.lazily_once('telescope')
+})
 
 vim.keymap.set("n", "<leader>f", "<cmd>Telescop find_files<cr>");
-
-vim.o.rnu = true
-vim.o.nu = true
