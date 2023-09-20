@@ -7,17 +7,32 @@ cmd=(-it nocksock/neovim-run ${2:-nvim})
 
 zparseopts -D -E -F -A opts h=help -help=help w=watch -watch=watch -nocache=nocache f=nocache
 
-if [[ -z $1 || ${help} ]]; then
+if [[ $help ]]; then
 	cat <<-EOF
 		Usage: $0 <name-of-example>
 			-h, --help    Show this help message
 			-w, --watch   Watch the example directory for changes
 	EOF
-	test ${help} && exit 0
-	exit 1
+	exit 0
+fi
+
+if [[ -z "$1" ]]; then
+	examples=$(fd . "$root_dir/examples" -d 1 -t d)
+	example_dir=$(echo $examples | fzf --preview "cat {}README.md" --height 10 --layout reverse --prompt "Choose Example:")
+	1=$(basename $example_dir)
+	if [[ -z "$example_dir" ]]; then
+		echo "No example chosen"
+		exit 1
+	fi
+	echo "Using $1"
 fi
 
 if [[ $watch ]]; then
+	if [[ -z $TMUX ]]; then
+		echo "must be called from within tmux session"
+		exit 1
+	fi
+
 	fd | entr -s "tmux killw -t docker ; tmux neww -d -n docker examples/run $1"
 	exit
 fi
@@ -49,7 +64,6 @@ if [[ $1 == "install-local" ]]; then
 	$cmd
  exit 0
 fi
-
 
 # all other examples have it pre-installed via mount
 docker run                                                                    \
