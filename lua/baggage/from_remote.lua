@@ -2,7 +2,6 @@ local r = require
 ---@param source string
 ---@param opts PluginOptions
 return function(source, opts)
-  local msg      = r'baggage.msg'
   local plugin   = r'baggage.create_plugin_from_url' (source, opts)
 
   r'baggage.prepare_opt_directory'(plugin)
@@ -11,16 +10,16 @@ return function(source, opts)
       -- using vim.cmd because vim.fn.system also blocks the UI when running synchroneously so we
       -- can't print info messages. But we *have* to run synchrounously because code after the call to
       -- from relies on packages existing.
-      vim.cmd("!git submodule add " .. plugin.clone_url .. " " .. plugin.dirname)
+      if plugin.commit then
+        vim.cmd("!git submodule add --branch ".. plugin.commit .. " " .. plugin.clone_url .. " " .. plugin.dirname)
+      else
+        vim.cmd("!git submodule add " .. plugin.clone_url .. " " .. plugin.dirname)
+      end
+
       vim.cmd("!git commit -m 'add: " .. plugin.dirname .. "'")
     end)
 
     r'baggage.within'(plugin.path, function()
-      if plugin.commit then
-        msg.info("checking out commit %s", plugin.commit)
-        vim.cmd("!git checkout " .. plugin.commit)
-      end
-
       if plugin.opts.on_sync then
         if vim.startswith(plugin.opts.on_sync, ":") then
           vim.cmd(plugin.opts.on_sync:sub(2))

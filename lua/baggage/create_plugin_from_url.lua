@@ -1,4 +1,5 @@
 local r = require
+
 ---@class Plugin
 ---@field name string
 ---@field path string
@@ -13,28 +14,15 @@ local r = require
 ---@field on_sync string
 
 ---@param source string any url with a basic format similar to gitlab/sourcehut/github etc
----@param opts PluginOptions
----@return Plugin
+---@param opts? PluginOptions
 return function(source, opts)
-  local settings = r'baggage.settings'
-  local host, org, name = source:match("https://([^/]+)/([^/]+)/([^/]+)/?")
-  local commit = source:match("/tree/([^/]+)$")
-  local plugin_opts = vim.tbl_extend('keep', opts or {}, {
-    on_sync = nil,
-    type = 'opt'
-  })
+  if vim.startswith(source, 'https://') then
+    return require'baggage.plugin_from_remote_url'(source, opts)
+  end
 
-  local dirname = org .. "-" .. name
-  local path = settings.pack_path .. plugin_opts.type .. '/' .. dirname
+  if vim.startswith(source, 'file://') then
+    return require'baggage.plugin_from_local_url'(source, opts)
+  end
 
-  return {
-    clone_url = "https://" .. host .. "/" .. org .. "/" .. name,
-    path = path,
-    dirname = dirname,
-    name = name,
-    org = org,
-    commit = commit,
-    remote = true,
-    opts = plugin_opts
-  }
+  error("unsupported source, only https and file allowed, received: " .. source .. "")
 end

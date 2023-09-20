@@ -1,20 +1,22 @@
-describe("baggage.create_plugin_from_url", function ()
+local r = require
+
+describe("baggage.plugin_from_remote_url", function ()
   it("works with gitlab urls", function ()
-    local result = r'baggage.create_plugin_from_url'("https://gitlab.com/nvim-telescope/telescope.nvim/tree/123")
+    local result = r'baggage.plugin_from_remote_url'("https://gitlab.com/nvim-telescope/telescope.nvim/tree/123")
     assert(result.org == "nvim-telescope", "expected foo, got" .. result.org)
     assert(result.name == "telescope.nvim")
     assert(result.commit == "123")
   end)
 
   it("works with github urls", function ()
-    local result = r'baggage.create_plugin_from_url'("https://github.com/nvim-telescope/telescope.nvim/tree/123")
+    local result = r'baggage.plugin_from_remote_url'("https://github.com/nvim-telescope/telescope.nvim/tree/123")
     assert(result.org == "nvim-telescope", "expected foo, got" .. result.org)
     assert(result.name == "telescope.nvim")
     assert(result.commit == "123")
   end)
 
   it("works with sourcehut urls", function ()
-    local result = r'baggage.create_plugin_from_url'("https://gitlab.com/nvim-telescope/telescope.nvim/tree/123")
+    local result = r'baggage.plugin_from_remote_url'("https://gitlab.com/nvim-telescope/telescope.nvim/tree/123")
     assert(result.org == "nvim-telescope", "expected foo, got" .. result.org)
     assert(result.name == "telescope.nvim")
     assert(result.commit == "123")
