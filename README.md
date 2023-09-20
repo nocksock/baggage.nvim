@@ -109,12 +109,12 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
 -- there's also a helper to make this even simpler
 vim.api.nvim_create_autocmd("BufEnter", {
-    callback = setup.laziliy('foo', {})
+    callback = setup.lazily('foo', {})
 })
 
 -- and another to make sure setup is only called *once*
 vim.api.nvim_create_autocmd("BufEnter", {
-    callback = setup.laziliy_once('foo', {})
+    callback = setup.lazily_once('foo', {})
 })
 ```
 
@@ -125,8 +125,8 @@ tbd: api description
 - `setup(name, opts)` is identical `require'name'.setup(opts)`
 - `setup.setup(name, opts)` identical to the above, for chaining
 - `setup.once(name,opts)` calls setup, but only if it hasn't been called before
-- `setup.laziliy(name, opts)` returns a thunk that calls the setup
-- `setup.laziliy_once(name, opts)` returns a thunk that calls the setup, but
+- `setup.lazily(name, opts)` returns a thunk that calls the setup
+- `setup.lazily_once(name, opts)` returns a thunk that calls the setup, but
 only if it hasn't been called before
 
 note that `name` can be omitted in a lot cases. It tries to infer the plugin name
