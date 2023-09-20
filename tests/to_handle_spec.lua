@@ -1,3 +1,4 @@
+local r = require
 local assert = require'luassert'
 local stub = require'luassert.stub'
 
@@ -6,9 +7,10 @@ describe("handle", function ()
   local handle
 
   before_each(function()
+    package.loaded['baggage.globals'] = { loaded = {} }
+    spy = stub()
     local plugin = r'baggage.create_plugin_from_url'("https://gitlab.com/nvim-telescope/telescope.nvim")
     handle = r'baggage.to_handle'(plugin)
-    spy = stub()
     package.loaded['telescope'] = { setup = spy }
   end)
 
@@ -28,8 +30,10 @@ describe("handle", function ()
   end)
 
   it("has a .lazily thunk for setup", function ()
+    handle.lazily('telescope', {})
+    assert.stub(spy).was_not_called()
     handle.lazily('telescope', {})()
-    assert.stub(spy).was_called()
+    assert.stub(spy).was_called(1)
   end)
 
   it("has a .setup that can be called multiple times", function ()
@@ -41,6 +45,12 @@ describe("handle", function ()
   it("has a .once method that ensures that setup is only called once", function ()
     handle.once('telescope', {})
     handle.once('telescope', {})
+    assert.stub(spy).was_called(1)
+  end)
+
+  it("has a .lazily_once method that ensures that setup is only called once and is lazy", function ()
+    handle.lazily_once('telescope', {})()
+    handle.lazily_once('telescope', {})()
     assert.stub(spy).was_called(1)
   end)
 

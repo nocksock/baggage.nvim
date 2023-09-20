@@ -1,11 +1,10 @@
 local r = require
-local called = {}
 
 ---creates a handle from a plugin
 ---@param plugin Plugin
 return function(plugin)
   --TODO: type in such a way that the table has the right type
-  ---@param name string
+  ---@param name? string
   ---@param opts? table
   ---@overload fun(opts: table)
   local setup = function(name, opts)
@@ -15,34 +14,48 @@ return function(plugin)
       name = nil
     end
 
-    local p = r'baggage.require'(name or plugin)
+    local p, package_name = r 'baggage.require_plugin' (name or plugin)
 
-    if not p.setup then
+    if p and p.setup then
+      p.setup(opts)
+
+      assert(package_name, "no package name, despite successfull require.")
+
+      r'baggage.globals'.loaded[package_name] = true
+    end
+  end
+
+  local lazily = function(name, opts)
+    return function()
+      setup(name, opts)
+    end
+  end
+
+  local setup_once = function(name, opts)
+    local p, package_name = r 'baggage.require_plugin' (name or plugin)
+
+    if r'baggage.globals'.loaded[package_name] then
       return
     end
 
-    p.setup(opts)
-  end
-  local lazily = function(handle, opts)
-    return function()
-      setup(handle, opts)
+    if p and p.setup then
+      p.setup(opts)
+      assert(package_name)
+      r'baggage.globals'.loaded[package_name] = true
     end
   end
+
   ---@class Handle
   local handle = {
-    load = function(handle)
-      return r 'baggage.require' (handle or plugin)
-    end,
-    once = function(handle, opts)
-      if called[handle] then
-        return
-      end
-
-      setup(handle, opts)
-      called[handle] = true
+    setup = setup,
+    once = setup_once,
+    load = function(name)
+      return r 'baggage.require_plugin' (name or plugin)
     end,
     lazily = lazily,
-    setup = setup
+    lazily_once = function(name, opts)
+      return function() setup_once(name, opts) end
+    end,
   }
 
   return setmetatable(handle, {
