@@ -21,41 +21,33 @@ return function(plugin)
 
       assert(package_name, "no package name, despite successfull require.")
 
-      r'baggage.globals'.loaded[package_name] = true
+      r 'baggage.globals'.loaded[package_name] = true
     end
   end
 
-  local lazily = function(name, opts)
-    return function()
-      setup(name, opts)
-    end
-  end
+  local once = r 'baggage.once'
 
-  local setup_once = function(name, opts)
-    local p, package_name = r 'baggage.require_plugin' (name or plugin)
-
-    if r'baggage.globals'.loaded[package_name] then
-      return
-    end
-
-    if p and p.setup then
-      p.setup(opts)
-      assert(package_name)
-      r'baggage.globals'.loaded[package_name] = true
-    end
+  local load = function(name)
+    return r 'baggage.require_plugin' (name or plugin)
   end
 
   ---@class Handle
   local handle = {
     setup = setup,
-    once = setup_once,
-    load = function(name)
-      return r 'baggage.require_plugin' (name or plugin)
-    end,
-    lazily = lazily,
-    lazily_once = function(name, opts)
-      return function() setup_once(name, opts) end
-    end,
+    once = once.defer(setup),
+    load = load,
+    lazily = setmetatable({
+      once = function(name, opts)
+        return once.defer(setup, name, opts)
+      end
+    }, {
+      __call = function(_, ...)
+        local args = { ... }
+        return function ()
+          return setup(unpack(args))
+        end
+      end
+    }),
   }
 
   return setmetatable(handle, {

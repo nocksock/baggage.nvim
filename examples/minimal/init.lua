@@ -18,7 +18,7 @@ local setup = require "baggage".from {
 }
 
 vim.api.nvim_create_autocmd({"BufEnter"}, {
-  callback = setup.lazily_once('telescope')
+  callback = setup.lazily.once('telescope')
 })
 
 vim.keymap.set("n", "<leader>f", "<cmd>Telescop find_files<cr>");
