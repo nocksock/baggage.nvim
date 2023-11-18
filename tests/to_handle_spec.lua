@@ -1,4 +1,4 @@
-local r = require
+local r = R
 local assert = require'luassert'
 local stub = require'luassert.stub'
 
@@ -14,22 +14,17 @@ describe("handle", function ()
     package.loaded['telescope'] = { setup = spy }
   end)
 
-  it("has a .setup that calls the plugin's setup", function ()
+  it("has a .setup function that calls the plugin's setup", function ()
     handle.setup('telescope', {})
     assert.stub(spy).was_called()
   end)
 
-  it("has a .setup that calls the inferred plugin's setup", function ()
+  it("has a .setup function that calls the inferred plugin's setup", function ()
     handle.setup({})
     assert.stub(spy).was_called()
   end)
 
-  it("has a .lazily thunk for setup", function ()
-    handle.lazily('telescope', {})()
-    assert.stub(spy).was_called()
-  end)
-
-  it("has a .lazily thunk for setup", function ()
+  it("has a .lazily thunk to call setup lazily", function ()
     handle.lazily('telescope', {})
     assert.stub(spy).was_not_called()
     handle.lazily('telescope', {})()
@@ -48,9 +43,9 @@ describe("handle", function ()
     assert.stub(spy).was_called(1)
   end)
 
-  it("has a .lazily_once method that ensures that setup is only called once and is lazy", function ()
-    handle.lazily_once('telescope', {})()
-    handle.lazily_once('telescope', {})()
+  it("has a .lazily.once method that ensures that setup is only called once and is lazy", function ()
+    handle.lazily.once('telescope', {})()
+    handle.lazily.once('telescope', {})()
     assert.stub(spy).was_called(1)
   end)
 
