@@ -28,16 +28,18 @@
 ## 0.3.0 conveniences
 
 - [ ] add commands
+    - [ ] `:Baggage` to open a split of terminal and docs in a new tab with
+    guidance on how to use git to update plugins
 
 ## 0.4.0 examples
 
-- [ ] add way for examples to use cached plugins to speed up debugging
+- [x] add way for examples to use cached plugins to speed up debugging
 - [x] watcher for example runner
 
 
 ## 0.5.0 let it simmer
 
-- [ ] let it sit for a few days
+- [x] let it sit for a few days
 
 ## 0.6.0 brush up
 
@@ -48,8 +50,8 @@
 
 - [ ] create basic api for lazy-loading on keypresses
 - [ ] add keymap tracker to prevent duplicate keymaps
-- [ ] provide example for lazy-loading
-  - [ ] on events
+- [x] provide example for lazy-loading
+  - [x] on events
   - [ ] on keypress
 
 
