@@ -2,7 +2,7 @@
 
 root_dir=$(git rev-parse --show-toplevel)
 example_dir="$root_dir/examples/$1/"
-cache_dir="$root_dir/.plugin-cache" # TODO: make cache work
+cache_dir="$root_dir/../baggage.nvim.plugin-cache"
 cmd=(-it nocksock/neovim-run ${2:-nvim})
 
 zparseopts -D -E -F -A opts h=help -help=help w=watch -watch=watch -nocache=nocache f=nocache
@@ -66,8 +66,8 @@ if [[ $1 == "install-local" ]]; then
 fi
 
 # all other examples have it pre-installed via mount
-docker run                                                                    \
-	-v "$example_dir":/root/.config/nvim                                        \
-	-v "$root_dir":/root/baggage.nvim                                           \
-	-v "$root_dir":/root/.local/share/nvim/site/pack/baggage/start/baggage.nvim \
+docker run                                          \
+	-v "$example_dir":/root/.config/nvim              \
+	-v "$root_dir":/root/baggage.nvim                 \
+	-v "$cache_dir":/root/.local/share/nvim/site/pack \
 	$cmd
