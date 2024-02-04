@@ -3,8 +3,8 @@ local r = require
 ---@param _ Plugin
 return function(_)
   local settings = r 'baggage.settings'
-  if not vim.uv.fs_stat(settings.pack_path .. 'opt/')
-    and not vim.uv.fs_stat(settings.pack_path .. 'opt/.git') then
+  if not vim.loop.fs_stat(settings.pack_path .. 'opt/')
+    and not vim.loop.fs_stat(settings.pack_path .. 'opt/.git') then
     r 'baggage.within' (settings.pack_path .. 'opt/', function()
       vim.cmd("!git init -b main")
     end)

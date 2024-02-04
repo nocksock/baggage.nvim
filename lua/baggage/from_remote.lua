@@ -5,7 +5,7 @@ return function(source, opts)
   local plugin   = r'baggage.create_plugin_from_url' (source, opts)
 
   r'baggage.prepare_opt_directory'(plugin)
-  if not vim.uv.fs_stat(plugin.path) then
+  if not vim.loop.fs_stat(plugin.path) then
     r'baggage.within'(r'baggage.settings'.opt_path, function()
       -- using vim.cmd because vim.fn.system also blocks the UI when running synchroneously so we
       -- can't print info messages. But we *have* to run synchrounously because code after the call to
@@ -28,7 +28,7 @@ return function(source, opts)
         end
       end
 
-      if vim.uv.fs_stat(plugin.path .. "/doc") then
+      if vim.loop.fs_stat(plugin.path .. "/doc") then
         vim.cmd("helptags " .. plugin.path .. "/doc")
       end
     end)

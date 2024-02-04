@@ -15,7 +15,7 @@ return function(source, opts)
   local dirname = name:gsub("/", "-")
   local path = settings.pack_path .. plugin_opts.type .. '/' .. dirname
 
-  local clone_url = vim.uv.fs_stat(path .. ".git")
+  local clone_url = vim.loop.fs_stat(path .. ".git")
     and path .. ".git"
     or nil
 

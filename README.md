@@ -24,7 +24,7 @@ To install, put this at the top of your `~/.config/nvim/init.lua`
 (note: this part is very likely not going to change anymore)
 ```lua
 vim.g.baggage_path = vim.fn.stdpath("data") .. "/site/pack/baggage/"
-if not vim.uv.fs_stat(vim.g.baggage_path) then
+if not vim.loop.fs_stat(vim.g.baggage_path) then
   vim.cmd("!git clone https://github.com/nocksock/baggage.nvim " .. vim.g.baggage_path .. 'start/baggage.nvim')
   vim.cmd("packloadall")
 end
