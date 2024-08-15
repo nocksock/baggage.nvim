@@ -1,58 +1,57 @@
 # ROADMAP
 
-## 0.0.0 poc
+## 0.0.0 POC
 
-- [x] create poc
+- [x] create POC
 - [x] decide on API
 - [x] make it work for my own config
 - [x] support for commits and tags
 
 
-## 0.1.0 making it usable
+## 0.1.0 Making it usable
 - [x] support for running commands after clone
 - [x] support tables with options in from (+tests)
 - [x] write initial setup routine
 - [x] update images to have git configured properly (name email)
-- [x] use submodule instead of clone
-- [x] clone plugins into opt and call packadd in .from
+- [x] use sub module instead of clone
+- [x] clone plugins into opt and call `packadd` in .from
 
 
-## 0.2.0 vertical slice
+## 0.2.0 Vertical slice
 
-- [x] display some ui during clone
-- [x] create basic api for lazy-loading on events
-- [x] add example using kickstart as a base
+- [x] display some UI during clone
+- [x] create basic API for lazy-loading on events
+- [x] add example using Kickstart as a base
 - [x] write tests for to_handle
 
 
-## 0.3.0 conveniences
+## 0.3.0 Conveniences
 
 - [ ] add commands
     - [ ] `:Baggage` to open a split of terminal and docs in a new tab with
     guidance on how to use git to update plugins
 
-## 0.4.0 examples
+## 0.4.0 Examples
 
 - [x] add way for examples to use cached plugins to speed up debugging
 - [x] watcher for example runner
 
 
-## 0.5.0 let it simmer
+## 0.5.0 Letting it simmer
 
-- [x] let it sit for a few days
+- [x] let it sit for a while
 
-## 0.6.0 brush up
+## 0.6.0 Brush up
 
 - [ ] do a code review, refactor
 
 
-## 0.7.0 utilities
+## 0.7.0 Utilities
 
-- [ ] create basic api for lazy-loading on keypresses
-- [ ] add keymap tracker to prevent duplicate keymaps
+- [x] create basic API for lazy-loading on key presses
 - [x] provide example for lazy-loading
   - [x] on events
-  - [ ] on keypress
+  - [x] on key press
 
 
 ## 0.8.0
@@ -64,33 +63,34 @@
 - [ ] write proper readme
 
 
-## brainfarts
+## Brainfarts
 
 - include version number in plugin-path if set
-
+- create a cli to handle updates etc
 
 ## Unsure
 
 - [ ] automated tests using the examples?
 - [ ] support for a `dependency` property?
-
     I usually found that order of imports is much more intuitive. However including
     it would make the migration path from something like lazy a bit easier, since it
-    would incloud less changes.
+    would include less changes.
 
 
-## Won't implemenent
+## Won't implement
 
-and tasks that turned out not work
+And tasks that turned out not work or decided shouldn't be part of baggage.
 
 - A fancy UI
 
 Instead of a UI, make it easy to run the appropriate git commands that will give
 similar results and has far greater value
 
-- [-] vim.g.baggage_* to vim.g.baggage.* for lsp?
-  not worth it, because one would have to check if vim.g.baggage exists in 
+- [-] vim.g.baggage_* to vim.g.baggage.* for LSP?
+  Not worth it, because one would have to check if vim.g.baggage exists in 
   the install script
+
+- [-] add keymap tracker to prevent duplicate keymaps
 
 <!-- 
 vi: ft=markdown
