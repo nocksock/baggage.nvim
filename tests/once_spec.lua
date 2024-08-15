@@ -64,4 +64,21 @@ describe("once", function()
     assert.are.same("foo", thunk())
   end)
 
+  it("has .wrap_lazy that creates a thunk builder that calls its initial callback before the thunk's callback", function()
+    local setup_params = {foo = "bar"}
+    local setup = stub()
+    local with_setup = once.wrap_lazy(setup, setup_params)
+
+    local on_callback = stub()
+    local callback_params = {bar = "baz"}
+    local trigger = with_setup(on_callback)
+
+    assert.stub(setup).was_called(0)
+    assert.stub(on_callback).was_called(0)
+
+    trigger(callback_params)
+
+    assert.stub(setup).was_called_with(setup_params)
+    assert.stub(on_callback).was_called_with(callback_params)
+  end)
 end)

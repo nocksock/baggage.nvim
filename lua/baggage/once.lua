@@ -15,8 +15,21 @@ local thunk = function(fn, ...)
   end
 end
 
+local wrap_lazy = function(setup_fn, ...)
+  local setup = thunk(setup_fn, ...)
+  return function(cb)
+    return function(...)
+      local args = {...}
+      setup()
+      return cb(unpack(args))
+    end
+  end
+end
+
+
 return setmetatable({
   lazy = thunk,
+  wrap_lazy = wrap_lazy,
   defer = thunk,
   clear = function()
     results = {}
