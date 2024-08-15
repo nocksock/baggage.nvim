@@ -34,6 +34,13 @@ return function(plugin)
   ---@class Handle
   local handle = {
     setup = setup,
+    wrap_lazy = once.wrap_lazy,
+    lazy_setup = function(name, opts)
+      return once.wrap_lazy(setup, name, opts)
+    end,
+    with_setup = function(name, opts)
+      return once.wrap_lazy(setup, name, opts)
+    end,
     once = once.defer(setup),
     load = load,
     lazily = setmetatable({
