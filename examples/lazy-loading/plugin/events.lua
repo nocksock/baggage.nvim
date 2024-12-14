@@ -1,7 +1,7 @@
 -- if you don't call any method on the return value of `from`, `setup` is a good
 -- name, as it it includes a few methods that can be used to, well, setup
 -- a plugin in specific way. eg. in a lazy way.
-local setup = require'baggage'.from {
+local baggage = require'baggage'.from {
   'https://github.com/nvim-lua/plenary.nvim',
   'https://github.com/nvim-telescope/telescope.nvim',
   -- if you want a much faster file-finder, uncomment the following:
@@ -28,16 +28,3 @@ vim.api.nvim_create_autocmd({"BufEnter"}, {
 -- TODO: api for lazyloading on keypress
 vim.keymap.set('n', '<leader>sf', '<cmd>Telescope find_files<cr>')
 vim.keymap.set('n', '<leader>sF', '<cmd>Telescope find_files hidden=true cwd=%:p:h<cr>')
-
-r'baggage.map'({
-  {'n', '<leader>sf', '<cmd>Telescope find_files<cr>'}
-}, handle)
-
-r'baggage.map'({
-  {'n', '<leader>sf', '<cmd>Telescope find_files<cr>'}
-}).setup(handle)
-
--- r'baggage.map' handle {
---   {'n', '<leader>sf', '<cmd>Telescope find_files<cr>'}
--- }
-

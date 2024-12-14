@@ -132,3 +132,5 @@ setup('oil', {
     },
   },
 })
+
+vim.keymap.set("n", "-", "<cmd>Oil<CR>", { desc = "Open [O]il" })
