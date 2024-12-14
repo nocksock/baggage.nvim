@@ -1,0 +1,224 @@
+*baggage.txt*                For 0.9                Last change: 2024 March 27
+
+==============================================================================
+Table of Contents                                  *baggage-table-of-contents*
+
+1. baggage.nvim                                         |baggage-baggage.nvim|
+  - Features                                   |baggage-baggage.nvim-features|
+  - Installation                           |baggage-baggage.nvim-installation|
+  - Usage                                         |baggage-baggage.nvim-usage|
+  - Handle API                               |baggage-baggage.nvim-handle-api|
+  - Update Plugins                            |baggage-baggage.update-plugins|
+  - Examples                                   |baggage-baggage.nvim-examples|
+  - Motivation                               |baggage-baggage.nvim-motivation|
+  - Credits                                     |baggage-baggage.nvim-credits|
+
+Warning: this is in early access. Things will break, things will change, and
+there’ll be breaking changes. Also it’s not complete yet. The following is an
+incomplete draft that likely isn’t up to date with the plugin’s API.
+
+==============================================================================
+1. baggage.nvim                                         *baggage-baggage.nvim*
+
+A thin wrapper around neovim’s builtin package management and git with some
+helper methods. 
+
+The goal is to create configuration files that are more easily to share and to
+embrace builtin features and external tools over abstractions in favor of
+simplicity at the cost of installation time during startup (if any).
+
+
+FEATURES                                       *baggage-baggage.nvim-features*
+
+tbd
+
+
+INSTALLATION                               *baggage-baggage.nvim-installation*
+
+To install, put this at the top of your `~/.config/nvim/init.lua`
+
+Note: this part is very likely not going to change anymore.
+
+>lua
+    vim.g.baggage_path = vim.fn.stdpath("data") .. "/site/pack/baggage/"
+    if not vim.loop.fs_stat(vim.g.baggage_path) then
+      vim.cmd("!git clone https://github.com/nocksock/baggage.nvim " .. vim.g.baggage_path .. 'start/baggage.nvim')
+      vim.cmd("packloadall")
+    end
+<
+
+USAGE                                             *baggage-baggage.nvim-usage*
+
+`baggage` installs missing plugins synchronously and sequentially. While this
+takes _much_ longer the first time, it removes the need to define a list of
+plugins as early as possible and makes it possible to colocate them alongside
+their configuration, eg. within the `plugin/` folder.
+
+This gives a similar style to how you would use/import packages in other
+programming languages:
+
+>lua
+    -- file: ~/.config/nvim/plugin/git.lua
+    require 'baggage' .from 'https://github.com/tpope/vim-fugitive'
+    
+    -- [...]
+<
+
+As it’s synchronously installing when needed execution of the rest of the
+file is blocked until installation is finished.
+
+`.from` exposes a `setup-handle` - which is just a table with a handful of
+common helper functions to call the plugin’s setup method and allows for some
+useful patterns using neovim’s api:
+
+>lua
+    local setup = require 'baggage' .from 'https://github.com/stevearc/oil.nvim'
+    
+    setup('oil', {
+        default_file_explorer = true
+        -- ... rest of oil config
+    })
+<
+
+`.from` can also take a table to include multiple urls as tables and call
+commands after installation as you might be familiar from other managers:
+
+>lua
+    local setup = require 'baggage'.from {
+      'https://github.com/nvim-lua/plenary.nvim',
+      'https://github.com/nvim-telescope/telescope.nvim/tree/0.1.x',,
+      { 'https://github.com/nvim-telescope/telescope-fzf-native.nvim', on_sync = "make" },
+    }
+    
+    setup('telescope', {
+        --- telescope config
+    })
+<
+
+You might be curious about those URLs. Most managers only need something like
+`nvim-lua/plenary` instead of the full URL. However I think it’s not only
+hurting the ecosystem to declare github as the defacto default plugin
+repository, it also makes it a bit more cumbersome to check a plugin’s
+readme, while also making it clear that it’s an external dependency instead
+of a local folder. Just `gx` and it will open the browser with that url.
+
+And yes, gitlab, sourcehut and all other platforms that have this URL format
+are supported - at the end it’s _basically_ just a `git clone <url>`, with
+some tweaks when pointing to branches/commits/tags.
+
+
+LAZY LOADING ON EVENTS ~
+
+>lua
+    local setup = require 'baggage' .from 'https://github.com/foo/bar'
+    
+    -- the handle can be called this way to setup a plugin:
+    vim.api.nvim_create_autocmd("BufEnter", {
+        callback = function()
+            setup('foo', {})
+        end
+    })
+    
+    -- there's also a helper to make this even simpler
+    vim.api.nvim_create_autocmd("BufEnter", {
+        callback = setup.lazily('foo', {})
+    })
+    
+    -- and another to make sure setup is only called *once*
+    vim.api.nvim_create_autocmd("BufEnter", {
+        callback = setup.lazily_once('foo', {})
+    })
+<
+
+
+LAZY LOADING ON KEYPRESS ~
+
+tbd
+
+
+HANDLE API                                   *baggage-baggage.nvim-handle-api*
+
+- `setup(name, opts)` is identical `require'name'.setup(opts)`
+- `setup.setup(name, opts)` identical to the above, for chaining
+- `setup.once(name,opts)` calls setup, but only if it hasn’t been called before
+- `setup.lazily(name, opts)` returns a thunk that calls the setup
+- `setup.lazily_once(name, opts)` returns a thunk that calls the setup, but
+    only if it hasn’t been called before
+
+note that `name` can be omitted in a lot cases. It tries to infer the plugin
+name of the _last_ plugin in a `.from`-table by one of the common patterns:
+`foo`, `nvim-foo`, `foo.nvim`
+
+
+UPDATE PLUGINS                                *baggage-baggage.update-plugins*
+
+Since Baggage.nvim is using git, and chances are high that *you* are used to
+using git as well anyway, Baggage.nvim does not provide commands to do what
+git can do perfectly fine.
+
+That's why `:Baggage` will simply open a split with a terminal in the folder
+where the plugins are being cloned to on the one side, and a cheat-sheet on
+the other. 
+
+This simple, but manual process will also prevent you from constantly updating
+your plugins for no reason and potentially break your config. You'll get used
+to doing it this way and at that point you will have acquired a few more git
+skill points.
+
+						 *baggage-baggage.cheat-sheet*
+THE CHEAT-SHEET
+
+    ==========================================
+    Common Git Commands for Plugin Management:
+    ==========================================
+
+    Update all plugins (submodules)
+
+	$ git submodule update --remote --merge
+    
+    Check status of all plugins (submodules)
+
+	$ git submodule status
+	$ git submodule foreach git status
+
+    List installed plugins (submodules)
+
+	$ ls
+
+    Read the plugins changelog
+	
+	$ cd <plugin-folder> ; git log
+
+	Or use `lazygit`, or `tig` or whatever.
+
+    Remove a plugin
+
+	$ git submodule deinit -f <plugin-folder>
+	$ git rm -f <plugin-folder>
+	$ rm -rf .git/modules/opt/<plugin-name>
+
+    Update helptags (note: this is an ex-command)
+      
+	:helptags ALL
+
+
+EXAMPLES                                       *baggage-baggage.nvim-examples*
+
+The `examples` folder contains a growing list of example neovim setups for
+specific use-cases and practical examples.
+
+
+MOTIVATION                                   *baggage-baggage.nvim-motivation*
+
+todo - easy to share `plugin/*.lua` files for easy copy paste - especially for
+newcomers
+
+
+CREDITS                                         *baggage-baggage.nvim-credits*
+
+Initial git clone code was shamelessly copied from AlphaKeks’ dotfiles
+<https://github.com/AlphaKeks/.dotfiles/blob/master/LICENSE>.
+
+Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
+
+vim:tw=78:ts=8:noet:ft=help:norl:
