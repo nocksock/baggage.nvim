@@ -27,9 +27,11 @@
 
 ## 0.3.0 Conveniences
 
-- [ ] add commands
-    - [ ] `:Baggage` to open a split of terminal and docs in a new tab with
+- [x] add commands
+    - [x] `:Baggage` to open a split of terminal and docs in a new tab with
     guidance on how to use git to update plugins
+    - [ ] Press enter on commands to paste them into th terminal
+    - [ ] Q in that window to close both and remove buffers
 
 ## 0.4.0 Examples
 
@@ -44,7 +46,7 @@
 ## 0.6.0 Brush up
 
 - [ ] do a code review, refactor
-
+- [ ] clone repos in parallel for each .from statement
 
 ## 0.7.0 Utilities
 
@@ -66,15 +68,10 @@
 ## Brainfarts
 
 - include version number in plugin-path if set
-- create a cli to handle updates etc
 
 ## Unsure
 
 - [ ] automated tests using the examples?
-- [ ] support for a `dependency` property?
-    I usually found that order of imports is much more intuitive. However including
-    it would make the migration path from something like lazy a bit easier, since it
-    would include less changes.
 
 
 ## Won't implement
@@ -92,6 +89,10 @@ similar results and has far greater value
 
 - [-] add keymap tracker to prevent duplicate keymaps
 
+- [ ] support for a `dependency` property?
+    I usually found that order of imports is much more intuitive. However including
+    it would make the migration path from something like lazy a bit easier, since it
+    would include less changes.
 <!-- 
 vi: ft=markdown
 -->
