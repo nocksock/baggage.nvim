@@ -16,7 +16,7 @@ return function(plugin)
 
     local p, package_name = r 'baggage.require_plugin' (name or plugin)
 
-    if p and p.setup then
+    if type(p) == "table" and p.setup then
       p.setup(opts)
 
       assert(package_name, "no package name, despite successfull require.")
