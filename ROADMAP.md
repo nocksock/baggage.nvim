@@ -30,8 +30,6 @@
 - [x] add commands
     - [x] `:Baggage` to open a split of terminal and docs in a new tab with
     guidance on how to use git to update plugins
-    - [ ] Press enter on commands to paste them into th terminal
-    - [ ] Q in that window to close both and remove buffers
 
 ## 0.4.0 Examples
 
@@ -47,6 +45,7 @@
 
 - [ ] do a code review, refactor
 - [ ] clone repos in parallel for each .from statement
+- [ ] make core agnostic from nvim so it could be used in any lua env?
 
 ## 0.7.0 Utilities
 

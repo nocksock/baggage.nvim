@@ -3,21 +3,30 @@
 A thin wrapper around neovim's builtin package management and git with some helper methods.
 Its goal is to create configuration files that are more easily to share and to embrace builtin features and external tools over abstractions.
 
-Instead of trying to optimise initial *cloning* speed, it install plugins synchronously. 
-This makes handling dependencies much simpler, and makes writing portable configurations much easier.
+Plugins are installed synchronously.
+This *will* make the *initial* setup much slower than other package managers. 
+However, this has no impact on subsequent startups and makes it possible to have a very simple API, without a complex configuration DSL:
 
-## Features
+```lua
+require 'baggage'.from {
+  'https://github.com/tpope/vim-fugitive',
+  'https://github.com/tpope/vim-rhubarb',
+  'https://github.com/lewis6991/gitsigns.nvim',
+}
 
-- Install plugins via git
-- Minimal abstraction
-- Manage plugins *yourself* and become independent of plugin managers.
-- Provides step-by-step instruction instead of a quick command to update, so you don't update your plugins habitually and potentially break things.
+-- gitsigns has been loaded at this point and can be required like normal
+require 'gitsigns'.setup {}
+```
+
+Just like imports in most programming languages. 
+
 
 ## Installation
 
-To install, put this at the top of your `~/.config/nvim/init.lua`
+To install `baggage.nvim`, put this at the top of your `~/.config/nvim/init.lua`
 
 (note: this part is very likely not going to change anymore)
+
 ```lua
 vim.g.baggage_path = vim.fn.stdpath("data") .. "/site/pack/baggage/"
 if not vim.loop.fs_stat(vim.g.baggage_path) then
@@ -28,12 +37,6 @@ end
 
 ## Usage
 
-`baggage` installs missing plugins synchronously and sequentially. 
-This takes *much* longer the first time than approaches by other managers.
-However it removes the need to define a list of plugins ahead of setup and makes it possible to colocate them alongside their configuration, eg. within the `plugin/` folder.
-
-This gives a similar style to how you would use/import packages in other 
-programming languages:
 
 ```lua
 -- file: ~/.config/nvim/plugin/git.lua
@@ -44,10 +47,8 @@ require 'do'.setup {
 }
 ```
 
-As it's synchronously installing when needed execution of the rest of the file is blocked until installation is finished. 
-
-`.from` returns a `setup-handle`.
-It provides a handful of common helper functions, like calling the plugin's setup method and allows for some useful patterns using neovim's api:
+`.from` returns a table with a handful of useful helper functions. 
+Like: calling the plugin's setup method, calling setup lazily - and only once, which and allows for some neat patterns:
 
 ```lua
 local setup = require 'baggage' .from 'https://github.com/stevearc/oil.nvim'
@@ -74,17 +75,13 @@ setup('telescope', {
 ```
 
 You might be curious about those URLs.
-Most managers only need something like `nvim-lua/plenary` instead of the full URL.
-However I think it's not only hurting the ecosystem to declare github as the defacto default plugin repository, it also makes it a bit more cumbersome to check a plugin's readme, while also making it clear that it's an external dependency instead of a local folder.
-Just `gx` and it will open the browser with that url.
 
-And yes, gitlab, sourcehut and all other platforms that have this URL format are supported - at the end it's *basically* just a `git clone <url>`, with some tweaks when pointing to branches/commits/tags.
+Baggage *deliberately* does not support short-urls for github.
+Not only is that hurting the ecosystem to make github the defacto default plugin repository, it also makes it a bit more cumbersome to check a plugin's readme. 
+This way it's just `gx` to open the browser with that url.
+Sourcehut, GitLab, Codeberg and all other platforms that have this URL format are supported.
 
 ### Lazy Loading on Events
-
-But what if a plugin is slow on startup?
-Notice that you still have to `require` the plugin manually each time.
-If you want to lazily load your plugin on certain events, you can lean on neovim's API instead of an builtin abstraction around it:
 
 ```lua
 local bag = require 'baggage' .from 'https://github.com/foo/bar'
@@ -107,46 +104,41 @@ vim.api.nvim_create_autocmd("BufEnter", {
 })
 ```
 
-These helper methods are incredibly thin and I invite you to look at them and use your own implementation.
-It's a good exercise to understandg more fundamentals of lua and neovim.
+These helper methods are incredibly thin, so thin that I encourage you to write your own.
 
 ### Lazy Loading on Keypress
 
-Similar to the above you'll often want to run some code once, but have multiple ways of triggering it.
-The most common use-case would be keymaps, where you'll want to require and setup a plugin only once, but you have mutliple keys that could trigger it.
+`baggage` does not provide an abstraction around keymaps to handle this, instead you can build this with a couple of provided helper functions.
 
-`baggage` does not provide an abstraction around keymaps to handle this, instead it provides functions to make handling these common scenarios easier, in order for you to understand nvim and its carefully crafted API better.
-This "inversion of control" has the benefit of providing solutions for scenarios I haven't even anticipated.
-
-For this, the `once` module provides a `wrap_lazy` function, that you can use like this:
+The `once` field in the handler provides a `wrap_lazy` function, that you can use like this:
 
 ```lua
 local bag = require 'baggage' .from 'https://github.com/foo/bar'
 
 local with_setup = bag.wrap_lazy(function()
-    r("some-plugin").setup({ foo = "bar" })
-
-    -- of course any other code related to setting a plugin, or a set of plugins up,
-    -- should be put here as well:
-    r('some-plugin').load_extension('baz') 
+    require("some-plugin").setup({ foo = "bar" })
+    require('some-plugin').load_extension('baz') 
 end)
 
 vim.keymap.set({ "n" }, "<leader>t", with_setup(function()
   -- setup will have been called here, but won't be called multiple times
-  r('some-plugin').call_some_fn()
+  require('some-plugin').call_some_fn()
 end))
 ```
 
-And for plugins that adhere to the standard of exposing a "setup" function - which really are most nvim plugins - there's `with_setup` on `bag` to save some boilerplate.
+When the plugin name can be infered from the repository, this can also be written:
 
 ```lua
 local bag = require 'baggage' .from 'https://github.com/foo/bar'
 
-local with_setup = bag.with_setup("some-plugin", { foo = "bar" })
+local with_setup = bag.with_setup("some-plugin", { 
+    -- the configuration table
+    foo = "bar"
+})
 
 vim.keymap.set({ "n" }, "<leader>t", with_setup(function()
   -- setup will have been called here, but won't be called multiple times
-  r('some-plugin').call_some_fn()
+  require('some-plugin').call_some_fn()
 end))
 ```
 
@@ -171,18 +163,10 @@ Assuming that `local bag = require 'baggage'.from "..."`
 : otherwise it does nothing.
 
 
-(warning not sure if I will keep the following)
-*NOTE*: `name` can be omitted in a lot of cases. 
-It tries to infer the plugin name of the *last* plugin in a `.from`-table by one of the common patterns: `foo`, `nvim-foo`, `foo.nvim`
-
 ## Examples
 
 The `examples` folder contains a growing list of example neovim setups for
 specific use-cases and practical examples.
-
-## Motivation
-
-- easy to share `plugin/*.lua` files for easy copy paste - especially for newcomers
 
 ## Credits
 
